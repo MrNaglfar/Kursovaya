@@ -1,72 +1,44 @@
-from typing import Optional, Enum
-from sqlmodel import Field, SQLModel, Enum
+from typing import Optional
+from sqlmodel import Field, SQLModel
 from datetime import date
 
-class Status(Enum):
-    Available = "Available"
-    Borrowed = "Borrowed"
-    Damaged = "Damaged"
-    Lost = "Lost"
-    Active = "Active"
-    Inactive = "Inactive"
-
-
-class Reader(SQLModel, table=True):
-    readerID: Optional[int] = Field(default=None, primary_key=True)
-    firstName: str
-    lastName: str
+class User(SQLModel, table=True):
+    user_id: Optional[int] = Field(default=None, primary_key=True)
+    surname: str
+    name: str
+    patronymic: str
     address: str
-    phoneNumber: str
-    dateOfBirth: date
-    registrationDate: date
-    status: Status = Status.Active
-    libraryCardNumber: str
+    phone_number: str
+    registration_date: date
+    email: str
 
 class Book(SQLModel, table=True):
-    bookID: Optional[int] = Field(default=None, primary_key=True)
-    ISBN: str
+    book_id: Optional[int] = Field(default=None, primary_key=True)
     title: str
-    authorID: int = Field(foreign_key="author.authorID")
-    publisherID: int = Field(foreign_key="publisher.publisherID")
-    publicationYear: int
-    numberOfCopies: int
-    availableCopies: int
-    location: str
-    status: Status = Status.Available
-
-class Journal(SQLModel, table=True):
-    journalID: Optional[int] = Field(default=None, primary_key=True)
-    ISSN: str
-    title: str
-    publisherID: int = Field(foreign_key="publisher.publisherID")
-    publicationYear: int
-    issueNumber: int
-    numberOfCopies: int
-    availableCopies: int
-    location: str
-    status: Status = Status.Available
+    isbn: str
+    publication_year: int
+    quantity: int
+    available_copies: int
+    author_id: int = Field(foreign_key="author.author_id")
+    genre_id: int = Field(foreign_key="genre.genre_id")
 
 class Author(SQLModel, table=True):
-    authorID: Optional[int] = Field(default=None, primary_key=True)
-    firstName: str
-    lastName: str
-    dateOfBirth: date
-    country: str
-
-class Publisher(SQLModel, table=True):
-    publisherID: Optional[int] = Field(default=None, primary_key=True)
+    author_id: Optional[int] = Field(default=None, primary_key=True)
+    surname: str
     name: str
-    address: str
+    patronymic: str
 
-class Loan(SQLModel, table=True):
-    loanID: Optional[int] = Field(default=None, primary_key=True)
-    readerID: int = Field(foreign_key="reader.readerID")
-    bookID: int = Field(foreign_key="book.bookID")
-    loanDate: date
-    returnDate: Optional[date] = None
-    fine: Optional[float] = 0.0
+class Genre(SQLModel, table=True):
+    genre_id: Optional[int] = Field(default=None, primary_key=True)
+    genre_name: str
 
+class BookIssue(SQLModel, table=True):
+    issue_id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.user_id")
+    book_id: int = Field(foreign_key="book.book_id")
+    issue_date: date
+    return_date: Optional[date] = None
 
 from sqlmodel import Session, create_engine
 
-engine = create_engine("sqlite:///library.db") 
+engine = create_engine("postgresql://postgres:6462523509@localhost:4578/postgres")
