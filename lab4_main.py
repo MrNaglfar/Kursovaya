@@ -65,3 +65,4 @@ def get_all_authors():
     with Session(engine) as session:
         authors = session.exec(select(Author)).all()
         return authors
+
