@@ -1,29 +1,26 @@
-from models import *
+from models import User, Book, Author, Genre, BookIssue
 from sqlmodel import Session, select
 from datetime import date
 
 with Session(engine) as session:
-    # Добавление издателей
-    publisher1 = Publisher(name="Манн, Иванов и Фербер", address="Москва")
-    publisher2 = Publisher(name="Альпина Паблишер", address="Санкт-Петербург")
-    session.add(publisher1)
-    session.add(publisher2)
-    session.commit()
-    session.refresh(publisher1)
-    session.refresh(publisher2)
-
-    # Добавление авторов
-    author1 = Author(firstName="Стивен", lastName="Кинг", dateOfBirth=date(1947, 9, 21), country="США")
-    author2 = Author(firstName="Джоанн", lastName="Роулинг", dateOfBirth=date(1965, 7, 31), country="Великобритания")
+    author1 = Author(surname="РўРѕР»СЃС‚РѕР№", name="Р›РµРІ", patronymic="РќРёРєРѕР»Р°РµРІРёС‡")
+    author2 = Author(surname="Р”РѕСЃС‚РѕРµРІСЃРєРёР№", name="Р¤С‘РґРѕСЂ", patronymic="РњРёС…Р°Р№Р»РѕРІРёС‡")
     session.add(author1)
     session.add(author2)
     session.commit()
     session.refresh(author1)
     session.refresh(author2)
 
-    # Добавление книг
-    book1 = Book(title="Оно", ISBN="978-5-00110-172-2", authorID=author1.authorID, publisherID=publisher1.publisherID, publicationYear=1986, numberOfCopies=5, availableCopies=3, location="Стеллаж А1")
-    book2 = Book(title="Гарри Поттер и философский камень", ISBN="978-5-17-073429-8", authorID=author2.authorID, publisherID=publisher2.publisherID, publicationYear=1997, numberOfCopies=10, availableCopies=7, location="Стеллаж B2")
+    genre1 = Genre(genre_name="Р РѕРјР°РЅ")
+    genre2 = Genre(genre_name="РџРѕРІРµСЃС‚СЊ")
+    session.add(genre1)
+    session.add(genre2)
+    session.commit()
+    session.refresh(genre1)
+    session.refresh(genre2)
+
+    book1 = Book(title="Р’РѕР№РЅР° Рё РјРёСЂ", isbn="978-5-17-091266-1", publication_year=1869, quantity=10, available_copies=5, author_id=author1.author_id, genre_id=genre1.genre_id)
+    book2 = Book(title="РџСЂРµСЃС‚СѓРїР»РµРЅРёРµ Рё РЅР°РєР°Р·Р°РЅРёРµ", isbn="978-5-17-091173-2", publication_year=1866, quantity=8, available_copies=3, author_id=author2.author_id, genre_id=genre1.genre_id)
     session.add(book1)
     session.add(book2)
     session.commit()
@@ -31,14 +28,12 @@ with Session(engine) as session:
     session.refresh(book2)
 
 
-    # Добавление читателей
-    reader1 = Reader(firstName="Иван", lastName="Иванов", address="ул. Ленина, 1", phoneNumber="+79123456789", dateOfBirth=date(1990, 5, 10), registrationDate=date(2023, 10, 26), libraryCardNumber="12345")
-    session.add(reader1)
+    user1 = User(surname="РРІР°РЅРѕРІ", name="РРІР°РЅ", patronymic="РРІР°РЅРѕРІРёС‡", address="СѓР». РџСѓС€РєРёРЅР°, 1", phone_number="+79123456789", registration_date=date(2023, 10, 26), email="ivanov@example.com")
+    session.add(user1)
     session.commit()
-    session.refresh(reader1)
+    session.refresh(user1)
 
-    # Добавление выдачи
-    loan1 = Loan(readerID=reader1.readerID, bookID=book1.bookID, loanDate=date(2023,10,27))
-    session.add(loan1)
+    book_issue1 = BookIssue(user_id=user1.user_id, book_id=book1.book_id, issue_date=date(2023, 10, 27))
+    session.add(book_issue1)
     session.commit()
-    session.refresh(loan1)
+    session.refresh(book_issue1)
